@@ -1,5 +1,5 @@
-# daynight-theme-gnome
-python script that sets automatically the themes for the day and night
+# Daynight theme gnome
+Python script that sets automatically the themes for the day and night
 
 
 ## Install
