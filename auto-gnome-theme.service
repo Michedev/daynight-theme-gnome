@@ -1,0 +1,12 @@
+[Unit]
+Description=Daynight Gnome Theme Changer
+After=syslog.target network.target multi-user.target nodm.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=on-abnormal
+ExecStart=%h/.local/share/daynight-gnome-theme/auto-theme
+
+[Install]
+WantedBy=graphical.target
