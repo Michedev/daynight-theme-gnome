@@ -1,0 +1,4 @@
+fire==0.3.1
+pick==0.6.7
+path.py==12.4.0
+python_dateutil==2.8.1
