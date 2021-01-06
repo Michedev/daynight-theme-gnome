@@ -1,21 +1,24 @@
-from auto_theme import USER_CONFIG
 from pick import pick
 from path import Path
 from datetime import datetime
-import json
+import yaml
 import os
 import re
+
+USER_CONFIG = Path(os.environ['HOME']) / '.config' / 'daynight-gnome-theming.yaml'
+
 
 def parse_time(msg, default_value):
     time_regex = '^$|([0-9]{1,2}:[0-9]{1,2})'
     matcher = re.compile(time_regex)
-    while not matcher.match(time:= input(msg)):
+    while not matcher.match(time := input(msg)):
         print('wrong input, it should be on the form HH:MM')
     if not time:
         time = default_value
-            
-    time = datetime.strptime(time,"%H:%M").time()
+
+    time = datetime.strptime(time, "%H:%M").time()
     return time
+
 
 def main():
     theme_folder = Path(os.environ['HOME']) / '.themes'
@@ -33,7 +36,8 @@ def main():
               'day_start': time_start.strftime("%H:%M"),
               'day_end': time_end.strftime("%H:%M")}
     with open(USER_CONFIG, 'w') as f:
-        json.dump(config, f, allow_nan=False)
+        yaml.safe_dump(config, f, allow_nan=False)
+
 
 if __name__ == "__main__":
     main()
