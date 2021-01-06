@@ -32,7 +32,7 @@ def main():
     time_start = parse_time('Insert time in the form HH:MM when the day theme starts: [default 06:00] ', '06:00')
     time_end = parse_time('Insert time in the form HH:MM when the day theme ends: [default 18:00] ', '18:00')
 
-    config = {'day_theme': day_theme, 'night_theme': night_theme,
+    config = {'day_theme': str(day_theme), 'night_theme': str(night_theme),
               'day_start': time_start.strftime("%H:%M"),
               'day_end': time_end.strftime("%H:%M")}
     with open(USER_CONFIG, 'w') as f:
