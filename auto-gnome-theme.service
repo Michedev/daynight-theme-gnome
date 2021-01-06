@@ -6,7 +6,7 @@ StartLimitIntervalSec=0
 [Service]
 Type=simple
 Restart=on-abnormal
-ExecStart=%h/.local/share/daynight-gnome-theme/auto-theme
+ExecStart=/usr/bin/daynight-theme
 
 [Install]
 WantedBy=graphical.target

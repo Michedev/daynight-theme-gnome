@@ -36,7 +36,7 @@ def main():
               'day_start': time_start.strftime("%H:%M"),
               'day_end': time_end.strftime("%H:%M")}
     with open(USER_CONFIG, 'w') as f:
-        yaml.safe_dump(config, f, allow_nan=False)
+        yaml.safe_dump(config, f)
 
 
 if __name__ == "__main__":

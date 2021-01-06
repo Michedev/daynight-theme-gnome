@@ -1,32 +1,33 @@
-destfolder = ~/.local/share/daynight-gnome-theme
+destfolder = /usr/bin/
 
 build-standalone-executable-config:
-	echo -e "#!/usr/bin/env python3\n\n" > auto_theme_config
-	cat auto_theme_config.py >> auto_theme_config
+	echo -e "#!/usr/bin/python3\n\n" > daynight_theme_config
+	cat daynight_theme_config.py >> daynight_theme_config
 
 
 build-standalone-executable:
-	echo -e "#!/usr/bin/env python3\n\n" > auto_theme
-	cat auto_theme.py >> auto_theme
+	echo -e "#!/usr/bin/python3\n\n" > daynight_theme
+	cat daynight_theme.py >> daynight_theme
 
 
 install-theme: build-standalone-executable-config build-standalone-executable
 	mkdir -p $(destfolder)
-	chmod +x auto_theme_config
-	mv auto_theme_config auto-theme-config
-	mv auto-theme-config $(destfolder)
-	chmod +x auto_theme
-	mv auto_theme auto-theme
-	mv auto-theme $(destfolder)
+	chmod +x daynight_theme_config
+	mv daynight_theme_config daynight-theme-config
+	sudo mv daynight-theme-config $(destfolder)
+	chmod +x daynight_theme
+	mv daynight_theme daynight-theme
+	sudo mv daynight-theme $(destfolder)
 
 
-copy-auto-theme-service:
-	cp auto-gnome-theme-changer.service ~/.config/systemd/user
+copy-daynight-theme-service:
+	mkdir -p ~/.config/systemd/user
+	cp daynight-gnome-theme.service ~/.config/systemd/user
 
-enable-auto-theme-service:
-	systemctl enable --user auto-gnome-theme-changer
-	systemctl start --user auto-gnome-theme-changer
+enable-daynight-theme-service:
+	systemctl enable --user daynight-gnome-theme
+	systemctl start --user daynight-gnome-theme
 
-install-auto-theme-service: copy-auto-theme-service enable-auto-theme-service
+install-daynight-theme-service: copy-daynight-theme-service enable-daynight-theme-service
 
-install-theme-service: install-theme install-auto-theme-service
+all: install-theme install-daynight-theme-service
