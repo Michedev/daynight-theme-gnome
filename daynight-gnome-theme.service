@@ -1,12 +1,13 @@
-[Unit]
+下載[Unit]
 Description=Daynight Gnome Theme Changer
-After=syslog.target network.target multi-user.target nodm.service
+After=network.target
 StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-Restart=on-abnormal
+Restart=always
+RestartSec=1
 ExecStart=/usr/bin/daynight-theme
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target
