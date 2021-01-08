@@ -39,7 +39,8 @@ class CommandRunner:
         while True:
             field = self.get_cmd_field()
             self.exec_commands(field)
-            time.sleep(10 * 60 * 1000)  # 10 minutes
+            sleep_time = min([10 * 60 * 1000, self.get_remaining_time_seconds()])
+            time.sleep()  # 10 minutes
 
     def exec_commands(self, field: Literal['day_value', 'night_value']):
         for command in self.commands:
@@ -54,6 +55,15 @@ class CommandRunner:
         else:
             return 'night_value'
 
+    def get_remaining_time_seconds(self) -> int:
+        curr_time = datetime.now()
+        if self.day_start <= curr_time < self.day_end:
+            return (self.day_end - curr_time).seconds
+        else:
+            result = (self.day_start - curr_time).seconds
+            if result < 0:  # for cases like curr_time= 22:00 and day_start=06:00 of the next day
+                result += 60 * 60 * 24
+            return result
 
 def load_config():
     assert USER_CONFIG.exists(), USER_CONFIG + ' doesn\'t exist'

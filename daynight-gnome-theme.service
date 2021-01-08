@@ -1,7 +1,5 @@
-下載[Unit]
+[Unit]
 Description=Daynight Gnome Theme Changer
-After=network.target
-StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -10,4 +8,4 @@ RestartSec=1
 ExecStart=/usr/bin/daynight-theme
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
