@@ -39,8 +39,8 @@ class CommandRunner:
         while True:
             field = self.get_cmd_field()
             self.exec_commands(field)
-            sleep_time = min([10 * 60 * 1000, self.get_remaining_time_seconds()])
-            time.sleep()  # 10 minutes
+            sleep_time = min([10 * 60 * 1000, self.get_remaining_time_seconds() * 1000])
+            time.sleep(sleep_time)  # 10 minutes
 
     def exec_commands(self, field: Literal['day_value', 'night_value']):
         for command in self.commands:
