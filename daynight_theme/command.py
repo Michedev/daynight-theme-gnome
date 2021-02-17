@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, NoReturn
 
 from path import Path
 
@@ -13,4 +13,4 @@ OPTIONAL_FIELDS = ['day_shell_theme', 'night_shell_theme']
 class Command:
     day_value: str
     night_value: str
-    cmd_f: Callable
+    action: Callable[[str], NoReturn]

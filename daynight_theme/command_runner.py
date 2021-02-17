@@ -29,7 +29,7 @@ class CommandRunner:
     def exec_commands(self, field: Literal['day_value', 'night_value']):
         for command in self.commands:
             field_value = getattr(command, field)
-            command.cmd_f(field_value)
+            command.action(field_value)
 
     def get_daytime_zome(self) -> Literal['day_value', 'night_value']:
         curr_time = datetime.now().time()
