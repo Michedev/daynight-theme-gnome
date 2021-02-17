@@ -1,8 +1,8 @@
 import os
 import time as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import time, datetime, timedelta
-from typing import Iterable, Literal
+from typing import Iterable, Literal, Optional
 
 from daynight_theme.command import Command
 
@@ -18,12 +18,15 @@ class CommandRunner:
     commands: Iterable[Command]
     day_start: time
     day_end: time
+    curr_timezone: Optional[Literal['day_value', 'night_value']] = field(default=None, init=False)
 
     def loop_forever(self):
         while True:
             daytime_zone = self.get_daytime_zome()
-            self.exec_commands(daytime_zone)
-            sleep_time = min([10 * 60, self.get_remaining_time_seconds()])
+            if self.curr_timezone is not None or self.curr_timezone != daytime_zone:
+                self.exec_commands(daytime_zone)
+                self.curr_timezone = daytime_zone
+            sleep_time = min([10 * 60, self.seconds_next_daytimezone()])
             t.sleep(sleep_time)  # 10 minutes
 
     def exec_commands(self, field: Literal['day_value', 'night_value']):
@@ -38,7 +41,7 @@ class CommandRunner:
         else:
             return 'night_value'
 
-    def get_remaining_time_seconds(self) -> int:
+    def seconds_next_daytimezone(self) -> int:
         curr_time = datetime.now().time()
         if self.day_start <= curr_time < self.day_end:
             return diff_times_seconds(self.day_end, curr_time)
