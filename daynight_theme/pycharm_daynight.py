@@ -22,7 +22,7 @@ day_color_scheme_xml = """\
 night_color_scheme_xml = """\
 <application>
   <component name="EditorColorsManagerImpl">
-    <global_color_scheme name="Darcula copy" />
+    <global_color_scheme name="Darcula" />
   </component>
 </application>"""
 
