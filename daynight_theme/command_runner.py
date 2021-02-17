@@ -23,7 +23,7 @@ class CommandRunner:
     def loop_forever(self):
         while True:
             daytime_zone = self.get_daytime_zome()
-            if self.curr_timezone is not None or self.curr_timezone != daytime_zone:
+            if self.curr_timezone is None or self.curr_timezone != daytime_zone:
                 self.exec_commands(daytime_zone)
                 self.curr_timezone = daytime_zone
             sleep_time = min([10 * 60, self.seconds_next_daytimezone()])
