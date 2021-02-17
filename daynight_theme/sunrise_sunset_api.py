@@ -71,8 +71,8 @@ def sunrise_sunset_time(lat=FLORENCE_LAT, long=FLORENCE_LONG) -> SunriseSunsetDa
     url = sunset_sunrise_url(lat, long)
     result = requests.get(url).json()
     if result['status'].lower() == 'ok':
-        sunrise = parse(result['results']['sunrise']).time()
-        sunset = parse(result['results']['sunset']).time()
+        sunrise = parse(result['results']['nautical_twilight_begin']).time()
+        sunset = parse(result['results']['nautical_twilight_end']).time()
         return SunriseSunsetData(sunrise, sunset)
     else:
         raise ValueError("request status is not ok")
