@@ -39,12 +39,14 @@ def gnome_shell_themes() -> list:
 def main():
     day_theme, night_theme = prompt_gtk_theme()
     shell_themes = prompt_gnome_shell_themes()
+    daynight_pycharm = prompt_pycharm()
     time_start = parse_time('Insert time in the form HH:MM when the day theme starts: [default 06:00] ', '06:00')
     time_end = parse_time('Insert time in the form HH:MM when the day theme ends: [default 18:00] ', '18:00')
 
     config = {'day_theme': day_theme, 'night_theme': night_theme,
               'day_start': time_start.strftime("%H:%M"),
-              'day_end': time_end.strftime("%H:%M")}
+              'day_end': time_end.strftime("%H:%M"),
+              'pycharm': daynight_pycharm}
     if shell_themes:
         config['day_shell_theme'] = shell_themes[0]
         config['night_shell_theme'] = shell_themes[1]
@@ -78,6 +80,9 @@ def prompt_gtk_theme():
     night_theme = pick(themes_list)
     return str(day_theme), str(night_theme)
 
+def prompt_pycharm():
+    prompt = Confirm.ask("Do you want day/night switch for pycharm? [yes/no]")
+    return str(prompt)
 
 def gtk_themes():
     theme_folder = Path(os.environ['HOME']) / '.themes'

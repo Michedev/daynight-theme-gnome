@@ -1,4 +1,3 @@
-pick==1.0.0
 dataclasses==0.8
 path.py==12.5.0
 python_dateutil==2.8.1
