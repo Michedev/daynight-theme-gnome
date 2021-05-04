@@ -1,6 +1,5 @@
 import os
-from dataclasses import dataclass
-from typing import Callable, NoReturn
+from abc import ABC, abstractmethod
 
 from path import Path
 
@@ -9,8 +8,12 @@ REQUIRED_FIELDS = ['day_theme', 'night_theme', 'day_start', 'day_end']
 OPTIONAL_FIELDS = ['day_shell_theme', 'night_shell_theme']
 
 
-@dataclass
-class Command:
+class Command(ABC):
     day_value: str
     night_value: str
-    action: Callable[[str], NoReturn]
+
+
+
+    @abstractmethod
+    def action(self, value: str):
+        pass

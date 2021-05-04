@@ -1,9 +1,11 @@
+import asyncio
 import os
 import time as t
 from dataclasses import dataclass, field
 from datetime import time, datetime, timedelta
 from typing import Iterable, Literal, Optional
 
+from daynight_theme.sunrise_sunset_api import sunrise_sunset_time
 from daynight_theme.command import Command
 
 
@@ -50,3 +52,13 @@ class CommandRunner:
             if result < 0:  # for cases like curr_time= 22:00 and day_start=06:00 of the next day
                 result += 60 * 60 * 24
             return result
+
+
+async def set_sunrise_sunset_everyday(command_runner):
+    while True:
+        sunset_sunrise = sunrise_sunset_time()
+        print('Set sunrise to', sunset_sunrise.sunrise)
+        print('Set sunset to', sunset_sunrise.sunset)
+        command_runner.day_start = sunset_sunrise.sunrise
+        command_runner.day_end = sunset_sunrise.sunset
+        await asyncio.sleep(24 * 60 * 60)  # wait one day
