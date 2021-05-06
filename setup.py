@@ -8,7 +8,7 @@ setup(
     entry_points={
         'console_scripts': [
             'daynight-theme = daynight_theme:main',
-            'daynight-theme-config = daynight_theme_config:main'
+            'daynight-theme-config = daynight_theme.daynight_theme_config:main'
         ]
     },
     license='MIT',

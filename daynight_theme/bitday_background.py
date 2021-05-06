@@ -8,11 +8,15 @@ from path import Path
 from daynight_theme.command import Command
 from daynight_theme.sunrise_sunset_api import SunriseSunsetData
 
+BITDAY_PREFIX = Path(os.environ["HOME"]) / 'Pictures' / 'bitday'
+
+
 def to_datetime(t: time) -> datetime:
     return datetime(2000, 1, 1,
                     t.hour,
                     t.minute,
                     t.second)
+
 
 @dataclass
 class BitDayBackground(Command):
@@ -38,22 +42,21 @@ class BitDayBackground(Command):
 
         self.day_spans = [(sunrise_dt + timedelta(seconds=v)).time() for v in day_spans]
         self.night_spans = [(sunset_dt + timedelta(seconds=v)).time() for v in night_spans]
-        self.day_images = ['./01-Early-Morning.png',
-                           './02-Mid-Morning.png',
-                           './03-Late-Morning.png',
-                           './04-Early-Afternoon.png',
-                           './05-Mid-Afternoon.png',
-                           './06-Late-Afternoon.png']
+        self.day_images = ['01-Early-Morning.png',
+                           '02-Mid-Morning.png',
+                           '03-Late-Morning.png',
+                           '04-Early-Afternoon.png',
+                           '05-Mid-Afternoon.png',
+                           '06-Late-Afternoon.png']
 
-        self.night_images = ['./07-Early-Evening.png',
-                             './08-Mid-Evening.png',
-                             './09-Late-Evening.png',
-                             './10-Early-Night.png',
-                             './11-Mid-Night.png',
-                             './12-Late-Night.png']
-        prefix = Path('/home/mikedev/Pictures/bitday_1920x1080')
-        self.day_images = [prefix / x for x in self.day_images]
-        self.night_images = [prefix / x for x in self.night_images]
+        self.night_images = ['07-Early-Evening.png',
+                             '08-Mid-Evening.png',
+                             '09-Late-Evening.png',
+                             '10-Early-Night.png',
+                             '11-Mid-Night.png',
+                             '12-Late-Night.png']
+        self.day_images = [BITDAY_PREFIX / x for x in self.day_images]
+        self.night_images = [BITDAY_PREFIX / x for x in self.night_images]
 
     def action(self, value: str):
         time_spans = self.day_spans if value == 'day' else self.night_spans
