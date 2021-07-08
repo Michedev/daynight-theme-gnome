@@ -5,7 +5,7 @@ Description=Daynight Gnome Theme Changer
 Type=simple
 Restart=always
 RestartSec=1
-ExecStart=/usr/bin/daynight-theme
+ExecStart=%h/.local/bin/daynight-theme
 
 [Install]
 WantedBy=default.target

@@ -20,21 +20,30 @@ class CommandRunner:
     commands: Iterable[Command]
     day_start: time
     day_end: time
-    curr_timezone: Optional[Literal['day_value', 'night_value']] = field(default=None, init=False)
+    curr_dayt_zn: Optional[Literal['day_value', 'night_value']] = field(default=None, init=False)
 
     def loop_forever(self):
         while True:
             daytime_zone = self.get_daytime_zome()
-            if self.curr_timezone is None or self.curr_timezone != daytime_zone:
+            if self.curr_dayt_zn is None or self.curr_dayt_zn != daytime_zone:
                 self.exec_commands(daytime_zone)
-                self.curr_timezone = daytime_zone
+                self.curr_dayt_zn = daytime_zone
+            else:
+                self.exec_commands_asap(daytime_zone)
             sleep_time = min([10 * 60, self.seconds_next_daytimezone()])
             t.sleep(sleep_time)  # 10 minutes
 
     def exec_commands(self, field: Literal['day_value', 'night_value']):
         for command in self.commands:
-            field_value = getattr(command, field)
+            field_value = getattr(command, field)  # command.day_value or command.night_value
             command.action(field_value)
+
+    def exec_commands_asap(self, field: Literal['day_value', 'night_value']):
+        for command in self.commands:
+            if command.asap_update:
+                dayzone_value = getattr(command, field)
+                command.action(dayzone_value)
+
 
     def get_daytime_zome(self) -> Literal['day_value', 'night_value']:
         curr_time = datetime.now().time()

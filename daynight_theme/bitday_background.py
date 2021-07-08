@@ -23,6 +23,7 @@ class BitDayBackground(Command):
     sunrise_sunset: SunriseSunsetData = field(init=True)
     day_value: str = field(default='day', init=False)
     night_value: str = field(default='night', init=False)
+    asap_update = True
 
     def __post_init__(self):
         day_spans = np.linspace(0, self.sunrise_sunset.delta_sunset_sunrise_seconds, 7)[1:]
