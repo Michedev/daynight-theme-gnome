@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from typing import Final
 
-from daynight_theme.command import Command
+from daynight_theme.commands.command import Command
 
 
 def set_cmd_notification(title: str, body: str = None):
@@ -11,8 +11,12 @@ def set_cmd_notification(title: str, body: str = None):
         cmd += f' "{body}"'
     os.system(cmd)
 
-@dataclass
+
 class SendNotification(Command):
+
+    @staticmethod
+    def can_add_to_registry(config) -> bool:
+        return config['daynight_notification']
 
     day_value = 'Good day!'
     night_value = 'Good night!'
@@ -24,4 +28,3 @@ class SendNotification(Command):
         os.system(cmd)
 
 
-CMD_NOTIFICATION: Final[Command] = SendNotification()

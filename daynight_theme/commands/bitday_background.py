@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, time
 import numpy as np
 from path import Path
 
-from daynight_theme.command import Command
+from daynight_theme.commands.command import Command
 from daynight_theme.sunrise_sunset_api import SunriseSunsetData
 
 BITDAY_PREFIX = Path(os.environ["HOME"]) / 'Pictures' / 'bitday'
@@ -18,12 +18,25 @@ def to_datetime(t: time) -> datetime:
                     t.second)
 
 
-@dataclass
 class BitDayBackground(Command):
-    sunrise_sunset: SunriseSunsetData = field(init=True)
-    day_value: str = field(default='day', init=False)
-    night_value: str = field(default='night', init=False)
-    asap_update = True
+
+    def __init__(self, config: dict):
+        super().__init__(config)
+        self.sunrise_sunset = SunriseSunsetData(config['day_start'], config['day_end'])
+
+    @property
+    def day_value(self) -> str:
+        return 'day'
+
+    @property
+    def night_value(self) -> str:
+        return 'night'
+
+    @staticmethod
+    def can_add_to_registry(config) -> bool:
+        return config['bitday_background']
+
+    asap_update: bool = True
 
     def __post_init__(self):
         day_spans = np.linspace(0, self.sunrise_sunset.delta_sunset_sunrise_seconds, 7)[1:]

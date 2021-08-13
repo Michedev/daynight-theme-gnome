@@ -1,18 +1,13 @@
 import asyncio
 import os
-from typing import List
 
 import yaml
 from dateutil.parser import parse
 from path import Path
 
-from .command import Command
-from .pycharm_daynight import exists_pycharm, PYCHARM_THEME_CMD, PYCHARM_COLOR_CMD
-from .notification import CMD_NOTIFICATION
+from .command_register import init_register
 from .command_runner import CommandRunner, set_sunrise_sunset_everyday
-from .bitday_background import BitDayBackground
-from .gnome_themes import GnomeThemeSetter, GnomeShellThemeSetter
-from .sunrise_sunset_api import SunriseSunsetData, sunrise_sunset_time
+from .sunrise_sunset_api import sunrise_sunset_time
 
 
 USER_CONFIG = Path(os.environ['HOME']) / '.config' / 'daynight-gnome-theming.yaml'
@@ -31,33 +26,10 @@ def load_config():
     return config
 
 
-def make_commands(config: dict) -> List[Command]:
-    CMD_THEME = GnomeThemeSetter(config['day_theme'], config['night_theme'])
-    result: List[Command] = [
-        CMD_THEME
-    ]
-    if 'day_shell_theme' in config and 'night_shell_theme' in config:
-        CMD_SHELL = GnomeShellThemeSetter(config['day_shell_theme'], config['night_shell_theme'])
-        result.append(CMD_SHELL)
-    if 'pycharm' in config:
-        if config['pycharm'] and exists_pycharm():
-            result.append(PYCHARM_THEME_CMD)
-            result.append(PYCHARM_COLOR_CMD)
-    else:
-        if exists_pycharm():
-            result.append(PYCHARM_THEME_CMD)
-            result.append(PYCHARM_COLOR_CMD)
-    if config['bitday_background']:
-        b = BitDayBackground(SunriseSunsetData(config['day_start'], config['day_end']))
-        result.append(b)
-    result.append(CMD_NOTIFICATION)
-    return result
-
-
 def main():
     config = load_config()
-    commands = make_commands(config)
-    runner = CommandRunner(commands, config['day_start'], config['day_end'])
+    init_register(config)
+    runner = CommandRunner(config['day_start'], config['day_end'])
     if config['use_api_sunrise_sunfall']:
         asyncio.gather(set_sunrise_sunset_everyday(runner))
     runner.loop_forever()

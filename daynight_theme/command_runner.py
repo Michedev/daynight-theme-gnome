@@ -1,12 +1,11 @@
 import asyncio
-import os
 import time as t
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import time, datetime, timedelta
-from typing import Iterable, Literal, Optional
+from typing import Literal, Optional
 
 from daynight_theme.sunrise_sunset_api import sunrise_sunset_time
-from daynight_theme.command import Command
+from daynight_theme.command_register import iter_commands
 
 
 def diff_times_seconds(t1, t2):
@@ -14,13 +13,12 @@ def diff_times_seconds(t1, t2):
                      minutes=t1.minute - t2.minute,
                      seconds=t1.second - t2.second).total_seconds()
 
+
 @dataclass
 class CommandRunner:
-
-    commands: Iterable[Command]
     day_start: time
     day_end: time
-    curr_dayt_zn: Optional[Literal['day_value', 'night_value']] = field(default=None, init=False)
+    curr_dayt_zn: Optional[Literal['day_value', 'night_value']] = None
 
     def loop_forever(self):
         while True:
@@ -34,16 +32,15 @@ class CommandRunner:
             t.sleep(sleep_time)  # 10 minutes
 
     def exec_commands(self, field: Literal['day_value', 'night_value']):
-        for command in self.commands:
+        for command in iter_commands():
             field_value = getattr(command, field)  # command.day_value or command.night_value
             command.action(field_value)
 
     def exec_commands_asap(self, field: Literal['day_value', 'night_value']):
-        for command in self.commands:
+        for command in iter_commands():
             if command.asap_update:
                 dayzone_value = getattr(command, field)
                 command.action(dayzone_value)
-
 
     def get_daytime_zome(self) -> Literal['day_value', 'night_value']:
         curr_time = datetime.now().time()
@@ -52,7 +49,7 @@ class CommandRunner:
         else:
             return 'night_value'
 
-    def seconds_next_daytimezone(self) -> int:
+    def seconds_next_daytimezone(self) -> float:
         curr_time = datetime.now().time()
         if self.day_start <= curr_time < self.day_end:
             return diff_times_seconds(self.day_end, curr_time)
@@ -63,11 +60,11 @@ class CommandRunner:
             return result
 
 
-async def set_sunrise_sunset_everyday(command_runner):
+async def set_sunrise_sunset_everyday(cmd_runner):
     while True:
         sunset_sunrise = sunrise_sunset_time()
         print('Set sunrise to', sunset_sunrise.sunrise)
         print('Set sunset to', sunset_sunrise.sunset)
-        command_runner.day_start = sunset_sunrise.sunrise
-        command_runner.day_end = sunset_sunrise.sunset
+        cmd_runner.day_start = sunset_sunrise.sunrise
+        cmd_runner.day_end = sunset_sunrise.sunset
         await asyncio.sleep(24 * 60 * 60)  # wait one day
