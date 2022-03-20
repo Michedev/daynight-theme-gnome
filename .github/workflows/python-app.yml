@@ -21,7 +21,7 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: install
         run: poetry install
-      - name: check command existence
-        run: whereis daynight-theme && whereis daynight-theme-config
+#      - name: check command existence
+#        run: whereis daynight-theme && whereis daynight-theme-config
       - name: install services
         run: make install-user-service
