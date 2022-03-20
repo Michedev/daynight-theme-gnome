@@ -19,8 +19,13 @@ jobs:
         uses: abatilo/actions-poetry@v2.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
-      - name: install
-        run: poetry install
-      - name: check command existence
+      - name: install and build
+        run: poetry install && poetry build
+      - name: install wheel
+        run: pip install wheel
+      - name: install package
+        run: pip install --user dist/daynight_theme-*.whl
+      - name: locate console scripts
         run: whereis daynight-theme && whereis daynight-theme-config
-
+      - name: ls .local/bin
+        run: ls ~/.local/bin
