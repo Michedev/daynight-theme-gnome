@@ -19,10 +19,10 @@ jobs:
         uses: abatilo/actions-poetry@v2.0.0
         with:
           poetry-version: ${{ matrix.poetry-version }}
-      - name: test
-        run: poetry run pytest
       - name: install
         run: poetry install
+      - name: test
+        run: poetry run pytest
       - name: check command existence
         run: whereis daynight-theme && whereis daynight-theme-config
       - name: install services
