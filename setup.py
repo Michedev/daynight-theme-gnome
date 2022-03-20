@@ -4,7 +4,7 @@ from pathlib import Path
 deps = """dataclasses
 path==15
 python_dateutil==2.8.1
-PyYAML==5.3.1
+PyYAML==5.4
 rich
 tenacity""".split('\n')
 setup(
