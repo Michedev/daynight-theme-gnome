@@ -20,15 +20,15 @@ def set_command(k: str, c: Command):
 def init_register(config: dict):
     CMD_THEME = GnomeThemeSetter(config)
     set_command('gnome_theme', CMD_THEME)
-    if GnomeShellThemeSetter.can_add_to_registry(config):
+    if GnomeShellThemeSetter.is_runnable(config):
         CMD_SHELL = GnomeShellThemeSetter(config)
         set_command('gnome_shell_theme', CMD_SHELL)
-    if PycharmColorSetter.can_add_to_registry(config):
+    if PycharmColorSetter.is_runnable(config):
         PYCHARM_THEME_CMD = PycharmThemeSetter(config)
         PYCHARM_COLOR_CMD = PycharmColorSetter(config)
         set_command('pycharm_theme', PYCHARM_THEME_CMD)
         set_command('pycharm_color', PYCHARM_COLOR_CMD)
-    if BitDayBackground.can_add_to_registry(config):
+    if BitDayBackground.is_runnable(config):
         b = BitDayBackground(config)
         set_command('bitday_background', b)
     cmd_notification = SendNotification(config)

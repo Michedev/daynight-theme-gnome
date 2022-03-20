@@ -15,7 +15,7 @@ def set_cmd_notification(title: str, body: str = None):
 class SendNotification(Command):
 
     @staticmethod
-    def can_add_to_registry(config) -> bool:
+    def is_runnable(config) -> bool:
         return config['daynight_notification']
 
     day_value = 'Good day!'

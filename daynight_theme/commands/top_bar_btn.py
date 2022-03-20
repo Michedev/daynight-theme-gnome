@@ -5,7 +5,7 @@ import os
 class TopBarBtn(Command):
 
     @staticmethod
-    def can_add_to_registry(config) -> bool:
+    def is_runnable(config) -> bool:
         return config['unite_button']
 
     @property

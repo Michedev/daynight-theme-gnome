@@ -11,7 +11,7 @@ class GnomeShellThemeSetter(Command):
         self.night_theme = config['night_theme']
 
     @staticmethod
-    def can_add_to_registry(config):
+    def is_runnable(config):
         return 'day_theme' in config and 'night_theme' in config
 
     @property
@@ -36,7 +36,7 @@ class GnomeThemeSetter(Command):
         self.night_theme = config['night_shell_theme']
 
     @staticmethod
-    def can_add_to_registry(config) -> bool:
+    def is_runnable(config) -> bool:
         return 'day_shell_theme' in config and 'night_shell_theme' in config
 
     @property

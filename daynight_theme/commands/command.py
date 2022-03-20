@@ -25,5 +25,5 @@ class Command(ABC):
 
     @staticmethod
     @abstractmethod
-    def can_add_to_registry(config) -> bool:
+    def is_runnable(config) -> bool:
         pass

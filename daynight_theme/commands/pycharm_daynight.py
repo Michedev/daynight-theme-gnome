@@ -90,7 +90,7 @@ class PycharmThemeSetter(Command):
             print("wrote into", filepath)
 
     @staticmethod
-    def can_add_to_registry(config) -> bool:
+    def is_runnable(config) -> bool:
         return ('pycharm' in config and config['pycharm'] and exists_pycharm()) or 'pycharm' not in config
 
 
@@ -108,7 +108,7 @@ class PycharmColorSetter(Command):
         return self.night_color_scheme_xml
 
     @staticmethod
-    def can_add_to_registry(config) -> bool:
+    def is_runnable(config) -> bool:
         return ('pycharm' in config and config['pycharm'] and exists_pycharm()) or 'pycharm' not in config
 
     day_color_scheme_xml = """\

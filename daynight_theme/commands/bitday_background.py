@@ -20,25 +20,11 @@ def to_datetime(t: time) -> datetime:
 
 class BitDayBackground(Command):
 
+    asap_update: bool = True
+
     def __init__(self, config: dict):
         super().__init__(config)
         self.sunrise_sunset = SunriseSunsetData(config['day_start'], config['day_end'])
-
-    @property
-    def day_value(self) -> str:
-        return 'day'
-
-    @property
-    def night_value(self) -> str:
-        return 'night'
-
-    @staticmethod
-    def can_add_to_registry(config) -> bool:
-        return config['bitday_background']
-
-    asap_update: bool = True
-
-    def __post_init__(self):
         day_spans = np.linspace(0, self.sunrise_sunset.delta_sunset_sunrise_seconds, 7)[1:]
         night_spans = np.linspace(0, self.sunrise_sunset.delta_sunrise_sunset_seconds, 7)[1:]
         self.max_diff_second_sunrise_sunset = max(self.sunrise_sunset.delta_sunset_sunrise_seconds,
@@ -71,6 +57,18 @@ class BitDayBackground(Command):
                              '12-Late-Night.png']
         self.day_images = [BITDAY_PREFIX / x for x in self.day_images]
         self.night_images = [BITDAY_PREFIX / x for x in self.night_images]
+
+    @property
+    def day_value(self) -> str:
+        return 'day'
+
+    @property
+    def night_value(self) -> str:
+        return 'night'
+
+    @staticmethod
+    def is_runnable(config) -> bool:
+        return config['bitday_background']
 
     def action(self, value: str):
         time_spans = self.day_spans if value == 'day' else self.night_spans
