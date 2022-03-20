@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "daynight-theme"
+version = "0.1.0"
+description = "Set automatic Gnome theme during day and night"
+authors = ["Mikedev <mik3dev@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+path = ">=15.0"
+PyYAML = ">=5.0"
+rich = "^12.0.0"
+tenacity = "^8.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.1"
+
+[tool.poetry.scripts]
+daynight-theme = 'daynight_theme:main'
+daynight-theme-config = 'daynight_theme.daynight_theme_config:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
