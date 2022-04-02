@@ -28,4 +28,4 @@ jobs:
       - name: locate console scripts
         run: whereis daynight-theme && whereis daynight-theme-config
       - name: check commands in .local/bin
-        run: command ~/.local/bin/daynight-theme; command whereis ~/.local/bin/daynight-theme-config
+        run: command -v ~/.local/bin/daynight-theme; command -v ~/.local/bin/daynight-theme-config
