@@ -4,9 +4,9 @@ from datetime import datetime
 
 import yaml
 from path import Path
-from rich.prompt import IntPrompt, Confirm, FloatPrompt
-from command_register import iter_commands
-from daynight_theme.commands.command import Command
+from rich.prompt import IntPrompt
+
+from daynight_theme.command_register import iter_commands
 
 USER_CONFIG = Path(os.environ['HOME']) / '.config' / 'daynight-gnome-theming.yaml'
 ROOT_THEMES = Path(os.environ['HOME']) / '.themes'

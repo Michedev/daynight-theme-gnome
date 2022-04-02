@@ -1,6 +1,6 @@
 from .bitday_background import BitDayBackground
 from .gnome_themes import GnomeThemeSetter, GnomeShellThemeSetter
-from .pycharm_daynight import PycharmThemeSetter, PycharmColorSetter, exists_pycharm
+from .pycharm_daynight import PycharmThemeSetter, exists_pycharm
 from .notification import SendNotification
 
 
@@ -11,7 +11,3 @@ How to add new Command:
 2. Update init_registry(config) into file command_register.py
 3. Optionally update daynight_theme_config.main() to add values into saved config
 """
-
-
-COMMAND_CLASSES = [GnomeThemeSetter, GnomeShellThemeSetter, PycharmThemeSetter,
-                   PycharmColorSetter, BitDayBackground, SendNotification]
