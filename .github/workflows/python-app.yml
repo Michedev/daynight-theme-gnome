@@ -27,5 +27,5 @@ jobs:
         run: pip install --user dist/daynight_theme-*.whl
       - name: locate console scripts
         run: whereis daynight-theme && whereis daynight-theme-config
-      - name: ls .local/bin
-        run: ls ~/.local/bin
+      - name: check commands in .local/bin
+        run: command ~/.local/bin/daynight-theme; command whereis ~/.local/bin/daynight-theme-config
