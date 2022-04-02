@@ -1,5 +1,6 @@
 import os
 from abc import ABC, abstractmethod, abstractproperty
+from typing import NoReturn
 
 
 class Command(ABC):
@@ -26,4 +27,9 @@ class Command(ABC):
     @staticmethod
     @abstractmethod
     def is_runnable(config) -> bool:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def on_config_setup(config) -> NoReturn:
         pass

@@ -5,7 +5,7 @@ import yaml
 from dateutil.parser import parse
 from path import Path
 
-from .command_register import init_register
+from .command_register import iter_commands
 from .command_runner import CommandRunner, set_sunrise_sunset_everyday
 from .sunrise_sunset_api import sunrise_sunset_time
 
@@ -28,8 +28,11 @@ def load_config():
 
 def main():
     config = load_config()
-    init_register(config)
-    runner = CommandRunner(config['day_start'], config['day_end'])
+    commands = []
+    for cmd_name, CmdClass in iter_commands():
+        if CmdClass.is_runnable(config):
+            commands.append(CmdClass(config))
+    runner = CommandRunner(config['day_start'], config['day_end'], commands)
     if config['use_api_sunrise_sunfall']:
         asyncio.gather(set_sunrise_sunset_everyday(runner))
     runner.loop_forever()

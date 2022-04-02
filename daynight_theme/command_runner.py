@@ -2,8 +2,9 @@ import asyncio
 import time as t
 from dataclasses import dataclass
 from datetime import time, datetime, timedelta
-from typing import Literal, Optional
+from typing import Literal, Optional, List
 
+from daynight_theme.commands.command import Command
 from daynight_theme.sunrise_sunset_api import sunrise_sunset_time
 from daynight_theme.command_register import iter_commands
 
@@ -18,6 +19,7 @@ def diff_times_seconds(t1, t2):
 class CommandRunner:
     day_start: time
     day_end: time
+    commands: List[Command]
     curr_dayt_zn: Optional[Literal['day_value', 'night_value']] = None
 
     def loop_forever(self):
@@ -32,12 +34,12 @@ class CommandRunner:
             t.sleep(sleep_time)  # 10 minutes
 
     def exec_commands(self, field: Literal['day_value', 'night_value']):
-        for command in iter_commands():
+        for command in self.commands:
             field_value = getattr(command, field)  # command.day_value or command.night_value
             command.action(field_value)
 
     def exec_commands_asap(self, field: Literal['day_value', 'night_value']):
-        for command in iter_commands():
+        for command in self.commands:
             if command.asap_update:
                 dayzone_value = getattr(command, field)
                 command.action(dayzone_value)

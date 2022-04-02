@@ -1,8 +1,12 @@
 import os
 
+from rich.prompt import Confirm
+
+from daynight_theme.command_register import register_command
 from daynight_theme.commands.command import Command
 
 
+@register_command(5)
 class SpotifyTheme(Command):
 
     @property
@@ -21,3 +25,12 @@ class SpotifyTheme(Command):
     @staticmethod
     def is_runnable(config) -> bool:
         return os.system('spicetify') == 0 and config['spotify']
+
+    @staticmethod
+    def on_config_setup(config) -> bool:
+        spotify = Confirm.ask('Do you want day/night spotify themes? (this will download spicetify) [yes/no]')
+        config['spotify'] = spotify
+        if spotify:
+            os.system('curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh')
+            os.system('git clone https://github.com/spicetify/spicetify-themes.git')
+            os.system('cd spicetify-themes && cp -r * ~/.config/spicetify/Themes && cd .. && rm -rf spicetify-themes')

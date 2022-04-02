@@ -1,7 +1,10 @@
 import os
 from dataclasses import dataclass
-from typing import Final
+from typing import Final, NoReturn
 
+from rich.prompt import Confirm
+
+from daynight_theme.command_register import register_command
 from daynight_theme.commands.command import Command
 
 
@@ -12,6 +15,7 @@ def set_cmd_notification(title: str, body: str = None):
     os.system(cmd)
 
 
+@register_command(2)
 class SendNotification(Command):
 
     @staticmethod
@@ -27,4 +31,7 @@ class SendNotification(Command):
             cmd += f' "{body}"'
         os.system(cmd)
 
-
+    @staticmethod
+    def on_config_setup(config) -> NoReturn:
+        config['daynight_notification'] = \
+            Confirm.ask('Do you want notification when switch day/night? [yes/no]')
