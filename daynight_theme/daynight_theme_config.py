@@ -1,26 +1,33 @@
 import os
 import re
-from datetime import datetime
-
+from datetime import datetime, time
+from itertools import chain
 import yaml
 from path import Path
-from rich.prompt import IntPrompt, Confirm, FloatPrompt
+from rich.prompt import IntPrompt, Confirm, FloatPrompt, Prompt
+
+from daynight_theme.command_register import iter_commands
 
 USER_CONFIG = Path(os.environ['HOME']) / '.config' / 'daynight-gnome-theming.yaml'
 ROOT_THEMES = Path(os.environ['HOME']) / '.themes'
 UNITE_PATH = Path(os.environ['HOME']) / '.local' / 'share' / 'gnome-shell' / 'extensions' / 'unite@hardpixel.eu'
 
 
-def parse_time(msg, default_value):
+def parse_time(msg):
+    is_correct = False
     time_regex = '^$|([0-9]{1,2}:[0-9]{1,2})'
     matcher = re.compile(time_regex)
-    while not matcher.match(time := input(msg)):
+    hour, mins = None, None
+    while not is_correct:
+        try:
+            m = matcher.match(input(msg))
+            hour, mins = int(m.group(1)), int(m.group(2))
+            is_correct = 0 <= hour < 24 and 0 <= mins < 60
+        except:
+            is_correct = False
         print('wrong input, it should be on the form HH:MM')
-    if not time:
-        time = default_value
-
-    time = datetime.strptime(time, "%H:%M").time()
-    return time
+    t = time(hour, mins, 0)
+    return t
 
 
 def pick(choices: list, end_msg: str = None):
@@ -33,169 +40,36 @@ def pick(choices: list, end_msg: str = None):
     return choices[picked - 1]
 
 
-def gnome_shell_themes() -> list:
-    root = Path(os.environ['HOME']) / '.themes'
-    return [folder.basename() for folder in root.dirs() if (folder / 'gnome-shell') in folder.dirs()]
-
-
-def prompt_api_sunrise_sunfall():
-    prompt = Confirm.ask('Do you want to pull from APIs automatically sunrise and sunfall time? [yes/no]')
-    if prompt:
-        lat = FloatPrompt.ask('Please insert the latitude coordinate of your location (need to call APIs)')
-        long = FloatPrompt.ask('Please insert the longitude coordinate of your location (need to call APIs)')
-        return prompt, lat, long
-    return prompt, None, None
-
-
-def ask_notification():
-    return Confirm.ask('Do you want notification when switch day/night? [yes/no]')
-
-
-def ask_unite_button():
-    if not UNITE_PATH.exists():
-        print('Warning: Unite extension not found at path', str(UNITE_PATH))
-        return False, None
-    ans = Confirm.ask('Do you want to switch day night unite buttons? [yes/no]')
-    if ans:
-        pick_ans = Confirm.ask('Do you want to choose button theme? [default is united-dark/united-light]')
-        if pick_ans:
-            theme_list = [x.basename for x in (UNITE_PATH / 'themes').dirs()]
-            day_theme = pick(theme_list, 'Select day button theme:')
-            print()
-            theme_list.remove(day_theme)
-            night_theme = pick(theme_list, 'Select night button theme:')
-        else:
-            day_theme = 'united-dark'
-            night_theme = 'united-light'
-        return ans, (day_theme, night_theme)
-    else:
-        return ans, None
-
-
-def gtk_theme_action(config):
-    day_theme, night_theme = prompt_gtk_theme()
-    config['day_theme'] = day_theme
-    config['night_theme'] = night_theme
-
-
-def shell_theme_action(config):
-    if shell_themes := prompt_gnome_shell_themes():
-        config['day_shell_theme'] = shell_themes[0]
-        config['night_shell_theme'] = shell_themes[1]
-
-
-def bitday_action(config):
-    config['bitday_background'] = prompt_bitday()
-
-
-def pycharm_action(config):
-    config['pycharm'] = prompt_pycharm()
-
-
-def daynight_action(config):
-    use_api_sunrise_sunfall, lat, long = prompt_api_sunrise_sunfall()
-    if use_api_sunrise_sunfall:
-        config['use_api_sunrise_sunfall'] = use_api_sunrise_sunfall
-        config['api_latitude'] = lat
-        config['api_longitude'] = long
-    if not use_api_sunrise_sunfall:
-        time_start = parse_time('Insert time in the form HH:MM when the day theme starts: [default 06:00] ', '06:00')
-        time_end = parse_time('Insert time in the form HH:MM when the day theme ends: [default 18:00] ', '18:00')
-        config['day_start'] = time_start.strftime("%H:%M")
-        config['day_end'] = time_end.strftime("%H:%M")
-
-
-def notification_action(config):
-    config['daynight_notification'] = ask_notification()
-
-
-def unite_button_action(config):
-    use_unite_btn, themes = ask_unite_button()
-    config['unite_button'] = use_unite_btn
-    if use_unite_btn:
-        config['unite_daybutton'] = themes[0]
-        config['unite_nightbutton'] = themes[1]
-
-
-def prompt_gnome_shell_themes():
-    add_shell_theme = Confirm.ask("Do you want to enter gnome shell theme too? [yes/no]")
-    if add_shell_theme:
-        day_theme_msg = 'Pick Gnome shell theme chosen during the day'
-        night_theme_msg = 'Pick Gnome shell theme chosen during the night'
-        themes_list = gnome_shell_themes()
-        day_shell_theme = pick(themes_list, day_theme_msg)
-        themes_list.remove(day_shell_theme)
-        night_shell_theme = pick(themes_list, night_theme_msg)
-        return str(day_shell_theme), str(night_shell_theme)
-    return None
-
-
-ACTIONS = [(name.replace('_action', '').replace('_', ' ').capitalize(), v) for name, v in locals().items() if
-           name.endswith('_action') and hasattr(v, '__call__')]
-
-ACTIONS = dict(ACTIONS)
-
-
-def prompt_gtk_theme():
-    themes_list = gtk_themes()
-    day_theme_msg = 'Pick Gnome theme chosen during the day'
-    night_theme_msg = 'Pick Gnome theme chosen during the night'
-    print()
-    day_theme = pick(themes_list, day_theme_msg)
-    themes_list.remove(day_theme)
-    print()
-    night_theme = pick(themes_list, night_theme_msg)
-    return str(day_theme), str(night_theme)
-
-
-def prompt_pycharm():
-    prompt = Confirm.ask("Do you want day/night switch for pycharm? [yes/no]")
-    return prompt
-
-
-def prompt_bitday():
-    prompt = Confirm.ask('Do you want bitday background? [yes/no]')
-    if prompt:
-        _download_bitday_images()
-    return prompt
-
-
-def _download_bitday_images():
-    try:
-        from mega import Mega
-    except ImportError:
-        os.system('pip install --user mega.py')
-        from mega import Mega
-    import zipfile
-    os.chdir(Path(os.environ['HOME']) / 'Pictures')
-    instance = Mega()
-    instance.login_anonymous()
-    instance.download_url('https://mega.nz/file/L55EHRoJ#kqbzKJUlQtIiZj4QZFl5Gcp7ebu_l2CR-pdL56gthOM')
-    dst_folder = Path('bitday')
-    if dst_folder.exists():
-        dst_folder.rmtree()
-    dst_folder.mkdir()
-    with zipfile.ZipFile('./BitDay-2-1920x1080.zip', 'r') as f:
-        f.extractall(dst_folder)
-    (dst_folder / '__MACOSX').rmtree()
-    images_folder: Path = dst_folder / '1920x1080'
-    for img in images_folder.files('*.png'):
-        img.move(dst_folder)
-    images_folder.rmtree()
-    print('Put bitday images into', dst_folder.abspath())
-
-
 def gtk_themes():
     theme_folder = Path(os.environ['HOME']) / '.themes'
     themes_list = [d.basename() for d in theme_folder.dirs()]
     return themes_list
 
+class SunriseSunSetDayNight:
+
+    @staticmethod
+    def on_config_setup(config):
+        daytime_auto = Confirm.ask("Do you want to setup day/night time automatically based on your latitude/longitude [yes/no]")
+        config['use_api_sunrise_sunfall'] = daytime_auto
+        if daytime_auto:
+            FLORENCE_LAT = 43.7799528
+            FLORENCE_LONG = 11.2059486
+            latitude = FloatPrompt.ask(f"Insert the latitude:", default=FLORENCE_LAT)
+            longitude = FloatPrompt.ask(f"Inset the longitude:", default=FLORENCE_LONG)
+            config['api_latitude'] = latitude
+            config['api_longitude'] = longitude
+        else:
+            day_start = parse_time('insert day start time (HH:mm): ')
+            day_end = parse_time('insert night start time (HH:mm): ')
+            config['day_start'] = day_start
+            config['day_end'] = day_end
+
 
 def run_all_actions():
     config = dict()
-    for action_name, action_f in ACTIONS.items():
+    for action_name, class_Command_ in chain(('Day/Night Time', SunriseSunSetDayNight), iter_commands()):
         print(f'====== {action_name} Section ======')
-        action_f(config)
+        class_Command_.on_config_setup(config)
     return config
 
 
@@ -204,14 +78,15 @@ def edit_fields():
         curr_config = yaml.safe_load(f)
     with open(USER_CONFIG + '.old', 'w') as f:
         yaml.safe_dump(curr_config, f)
-    choices = [action_name for action_name in ACTIONS] + ['Exit']
+    commands = [('Day/Night Time', SunriseSunSetDayNight)] + list(iter_commands())
+    choices = [action_name for action_name, _ in commands] + ['Exit']
     choice = None
     while choice is None or choice != 'Exit':
         print('Select the field you want to edit or exit:')
         choice = pick(choices)
         if choice != 'Exit':
-            action_f = ACTIONS[choice]
-            action_f(curr_config)
+            action_f = commands[choices.index(choice)][1]
+            action_f.on_config_setup(curr_config)
     print('Exiting...')
     return curr_config
 

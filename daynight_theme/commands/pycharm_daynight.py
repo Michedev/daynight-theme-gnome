@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Final
+from typing import Final, NoReturn
 
 from path import Path
+from rich.prompt import Confirm
+
+from daynight_theme.command_register import register_command
 from daynight_theme.commands.command import Command
 import os
 
@@ -56,7 +59,9 @@ def exists_pycharm():
     return path_configs.exists()
 
 
+@register_command(priority=4)
 class PycharmThemeSetter(Command):
+
     day_theme_xml: str = """\
     <application>
       <component name="LafManager" autodetect="false">
@@ -70,46 +75,6 @@ class PycharmThemeSetter(Command):
             <laf class-name="com.intellij.ide.ui.laf.darcula.DarculaLaf" />
         </component>
     </application>"""
-
-    def __init__(self, config: dict):
-        super().__init__(config)
-
-    @property
-    def day_value(self) -> str:
-        return self.day_theme_xml
-
-    @property
-    def night_value(self) -> str:
-        return self.night_theme_xml
-
-    def action(self, xml_text: str):
-        for dirpath in path_configs.walkdirs('PyCharm*'):
-            filepath = dirpath / "options" / "laf.xml"
-            with open(filepath, 'w') as f:
-                f.write(xml_text)
-            print("wrote into", filepath)
-
-    @staticmethod
-    def can_add_to_registry(config) -> bool:
-        return ('pycharm' in config and config['pycharm'] and exists_pycharm()) or 'pycharm' not in config
-
-
-class PycharmColorSetter(Command):
-
-    def __init__(self, config: dict):
-        super().__init__(config)
-
-    @property
-    def day_value(self) -> str:
-        return self.day_color_scheme_xml
-
-    @property
-    def night_value(self) -> str:
-        return self.night_color_scheme_xml
-
-    @staticmethod
-    def can_add_to_registry(config) -> bool:
-        return ('pycharm' in config and config['pycharm'] and exists_pycharm()) or 'pycharm' not in config
 
     day_color_scheme_xml = """\
     <application>
@@ -125,9 +90,75 @@ class PycharmColorSetter(Command):
       </component>
     </application>"""
 
-    def action(self, xml_text: str):
+    def __init__(self, config: dict):
+        super().__init__(config)
+
+    @property
+    def day_value(self) -> str:
+        return 'day'
+
+    @property
+    def night_value(self) -> str:
+        return 'night'
+
+    def action(self, value: str):
+        assert value in ['day', 'night']
+        xml_theme = self.day_theme_xml if value == 'day' else self.night_theme_xml
+        xml_color = self.day_color_scheme_xml if value == 'day' else self.night_color_scheme_xml
         for dirpath in path_configs.walkdirs('PyCharm*'):
-            filepath = dirpath / "options" / "colors.scheme.xml"
-            with open(filepath, 'w') as f:
-                f.write(xml_text)
-            print("wrote into", filepath)
+            filepath_theme = dirpath / "options" / "laf.xml"
+            filepath_color = dirpath / "options" / "colors.scheme.xml"
+            with open(filepath_theme, 'w') as f:
+                f.write(xml_theme)
+            with open(filepath_color, 'w') as f:
+                f.write(xml_color)
+            print("wrote into", filepath_theme)
+            print('wrote into', filepath_color)
+
+    @staticmethod
+    def is_runnable(config) -> bool:
+        return ('pycharm' in config and config['pycharm'] and exists_pycharm()) or 'pycharm' not in config
+
+    @staticmethod
+    def on_config_setup(config) -> NoReturn:
+        prompt = Confirm.ask("Do you want day/night switch for pycharm? [yes/no]")
+        config['pycharm'] = prompt
+
+
+# class PycharmColorSetter(Command):
+#
+#     def __init__(self, config: dict):
+#         super().__init__(config)
+#
+#     @property
+#     def day_value(self) -> str:
+#         return self.day_color_scheme_xml
+#
+#     @property
+#     def night_value(self) -> str:
+#         return self.night_color_scheme_xml
+#
+#     @staticmethod
+#     def is_runnable(config) -> bool:
+#         return ('pycharm' in config and config['pycharm'] and exists_pycharm()) or 'pycharm' not in config
+#
+#     day_color_scheme_xml = """\
+#     <application>
+#       <component name="EditorColorsManagerImpl">
+#         <global_color_scheme name="IntelliJ Light" />
+#       </component>
+#     </application>"""
+#
+#     night_color_scheme_xml = """\
+#     <application>
+#       <component name="EditorColorsManagerImpl">
+#         <global_color_scheme name="Darcula" />
+#       </component>
+#     </application>"""
+#
+#     def action(self, xml_text: str):
+#         for dirpath in path_configs.walkdirs('PyCharm*'):
+#             filepath = dirpath / "options" / "colors.scheme.xml"
+#             with open(filepath, 'w') as f:
+#                 f.write(xml_text)
+#             print("wrote into", filepath)

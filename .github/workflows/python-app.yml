@@ -1,0 +1,31 @@
+name: build app
+on: push
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.9]
+        poetry-version: [1.1.11]
+        os: [ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: install and build
+        run: poetry install && poetry build
+      - name: install wheel
+        run: pip install wheel
+      - name: install package
+        run: pip install --user dist/daynight_theme-*.whl
+      - name: locate console scripts
+        run: whereis daynight-theme && whereis daynight-theme-config
+      - name: check commands in .local/bin
+        run: command -v ~/.local/bin/daynight-theme; command -v ~/.local/bin/daynight-theme-config

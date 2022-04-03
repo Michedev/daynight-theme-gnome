@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "daynight-theme"
+version = "0.1.0"
+description = "Set automatic Gnome theme during day and night"
+authors = ["Mikedev <mik3dev@gmail.com>"]
+license = "MIT"
+include = ['BitDay-2-1920x1080.zip']
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0.0"
+path = ">=15.0"
+PyYAML = ">=5.0"
+rich = ">=10.0.0"
+tenacity = ">=7.0.1"
+dateutils = "^0.6.12"
+numpy = "^1.22.3"
+requests = "^2.27.1"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=6.0"
+poethepoet = "^0.13.1"
+
+[tool.poetry.scripts]
+daynight-theme = 'daynight_theme:main'
+daynight-theme-config = 'daynight_theme.daynight_theme_config:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks.install]
+shell = "poetry build;  /usr/bin/pip uninstall -y daynight-theme; /usr/bin/pip install --user dist/daynight_theme-*-py3-none-any.whl;"
+interpreter = ["fish", "posix"]

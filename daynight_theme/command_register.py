@@ -1,47 +1,20 @@
 from typing import Iterator, Tuple
 
-from daynight_theme.commands import GnomeThemeSetter, GnomeShellThemeSetter, PycharmThemeSetter, \
-    PycharmColorSetter, BitDayBackground
-from daynight_theme.commands.command import Command
-from daynight_theme.commands.notification import SendNotification
-from daynight_theme.sunrise_sunset_api import SunriseSunsetData
+import numpy as np
 
-_register = dict()
+_register_class = list()
+_register_priority = list()
 
 
-def get_command(k: str): return _register[k]
+def register_command(priority: int = 0):
+    def decorator(class_: 'Command'):
+        _register_class.append((class_.__name__, class_))
+        _register_priority.append(priority)
+        return class_
+    return decorator
 
 
-def set_command(k: str, c: Command):
-    assert isinstance(c, Command)
-    _register[k] = c
-
-
-def init_register(config: dict):
-    CMD_THEME = GnomeThemeSetter(config)
-    set_command('gnome_theme', CMD_THEME)
-    if GnomeShellThemeSetter.can_add_to_registry(config):
-        CMD_SHELL = GnomeShellThemeSetter(config)
-        set_command('gnome_shell_theme', CMD_SHELL)
-    if PycharmColorSetter.can_add_to_registry(config):
-        PYCHARM_THEME_CMD = PycharmThemeSetter(config)
-        PYCHARM_COLOR_CMD = PycharmColorSetter(config)
-        set_command('pycharm_theme', PYCHARM_THEME_CMD)
-        set_command('pycharm_color', PYCHARM_COLOR_CMD)
-    if BitDayBackground.can_add_to_registry(config):
-        b = BitDayBackground(config)
-        set_command('bitday_background', b)
-    cmd_notification = SendNotification(config)
-    set_command('daynight_notification', cmd_notification)
-
-
-def iter_commands() -> Iterator[Command]:
-    yield from _register.values()
-
-
-def iter_cmd_keys() -> Iterator[str]:
-    yield from _register.keys()
-
-
-def iter_keys_commands() -> Iterator[Tuple[str, Command]]:
-    yield from _register.items()
+def iter_commands() -> Iterator[Tuple[str, 'Command']]:
+    i_sorted = np.argsort(_register_priority)
+    for i in i_sorted:
+        yield _register_class[i]
