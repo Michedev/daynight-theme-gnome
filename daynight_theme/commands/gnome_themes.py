@@ -10,13 +10,13 @@ from daynight_theme.commands.command import Command
 
 def gtk_themes():
     theme_folder = Path(os.environ['HOME']) / '.themes'
-    themes_list = [d.basename() for d in theme_folder.dirs()]
+    themes_list = [str(d.basename()) for d in theme_folder.dirs()]
     return themes_list
 
 
 def gnome_shell_themes() -> list:
     root = Path(os.environ['HOME']) / '.themes'
-    return [folder.basename() for folder in root.dirs() if (folder / 'gnome-shell') in folder.dirs()]
+    return [str(folder.basename()) for folder in root.dirs() if (folder / 'gnome-shell') in folder.dirs()]
 
 
 def pick(choices: list, end_msg: str = None):
@@ -28,7 +28,7 @@ def pick(choices: list, end_msg: str = None):
     picked = IntPrompt.ask(msg, choices=int_choices, show_choices=False)
     return choices[picked - 1]
 
-@register_command(0)
+@register_command(priority=0)
 class GnomeShellThemeSetter(Command):
 
     def __init__(self, config):
@@ -66,7 +66,7 @@ class GnomeShellThemeSetter(Command):
         return str(day_theme), str(night_theme)
 
 
-@register_command(1)
+@register_command(priority=1)
 class GnomeThemeSetter(Command):
 
     def __init__(self, config: dict):

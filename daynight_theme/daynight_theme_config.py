@@ -1,10 +1,10 @@
 import os
 import re
-from datetime import datetime
-
+from datetime import datetime, time
+from itertools import chain
 import yaml
 from path import Path
-from rich.prompt import IntPrompt
+from rich.prompt import IntPrompt, Confirm, FloatPrompt, Prompt
 
 from daynight_theme.command_register import iter_commands
 
@@ -13,16 +13,21 @@ ROOT_THEMES = Path(os.environ['HOME']) / '.themes'
 UNITE_PATH = Path(os.environ['HOME']) / '.local' / 'share' / 'gnome-shell' / 'extensions' / 'unite@hardpixel.eu'
 
 
-def parse_time(msg, default_value):
+def parse_time(msg):
+    is_correct = False
     time_regex = '^$|([0-9]{1,2}:[0-9]{1,2})'
     matcher = re.compile(time_regex)
-    while not matcher.match(time := input(msg)):
+    hour, mins = None, None
+    while not is_correct:
+        try:
+            m = matcher.match(input(msg))
+            hour, mins = int(m.group(1)), int(m.group(2))
+            is_correct = 0 <= hour < 24 and 0 <= mins < 60
+        except:
+            is_correct = False
         print('wrong input, it should be on the form HH:MM')
-    if not time:
-        time = default_value
-
-    time = datetime.strptime(time, "%H:%M").time()
-    return time
+    t = time(hour, mins, 0)
+    return t
 
 
 def pick(choices: list, end_msg: str = None):
@@ -40,10 +45,29 @@ def gtk_themes():
     themes_list = [d.basename() for d in theme_folder.dirs()]
     return themes_list
 
+class SunriseSunSetDayNight:
+
+    @staticmethod
+    def on_config_setup(config):
+        daytime_auto = Confirm.ask("Do you want to setup day/night time automatically based on your latitude/longitude [yes/no]")
+        config['use_api_sunrise_sunfall'] = daytime_auto
+        if daytime_auto:
+            FLORENCE_LAT = 43.7799528
+            FLORENCE_LONG = 11.2059486
+            latitude = FloatPrompt.ask(f"Insert the latitude:", default=FLORENCE_LAT)
+            longitude = FloatPrompt.ask(f"Inset the longitude:", default=FLORENCE_LONG)
+            config['api_latitude'] = latitude
+            config['api_longitude'] = longitude
+        else:
+            day_start = parse_time('insert day start time (HH:mm): ')
+            day_end = parse_time('insert night start time (HH:mm): ')
+            config['day_start'] = day_start
+            config['day_end'] = day_end
+
 
 def run_all_actions():
     config = dict()
-    for action_name, class_Command_ in iter_commands():
+    for action_name, class_Command_ in chain(('Day/Night Time', SunriseSunSetDayNight), iter_commands()):
         print(f'====== {action_name} Section ======')
         class_Command_.on_config_setup(config)
     return config
@@ -54,7 +78,7 @@ def edit_fields():
         curr_config = yaml.safe_load(f)
     with open(USER_CONFIG + '.old', 'w') as f:
         yaml.safe_dump(curr_config, f)
-    commands = list(iter_commands())
+    commands = [('Day/Night Time', SunriseSunSetDayNight)] + list(iter_commands())
     choices = [action_name for action_name, _ in commands] + ['Exit']
     choice = None
     while choice is None or choice != 'Exit':

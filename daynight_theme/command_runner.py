@@ -6,7 +6,6 @@ from typing import Literal, Optional, List
 
 from daynight_theme.commands.command import Command
 from daynight_theme.sunrise_sunset_api import sunrise_sunset_time
-from daynight_theme.command_register import iter_commands
 
 
 def diff_times_seconds(t1, t2):
@@ -62,11 +61,11 @@ class CommandRunner:
             return result
 
 
-async def set_sunrise_sunset_everyday(cmd_runner):
+async def update_sunrise_sunset_everyday(cmd_runner):
     while True:
+        await asyncio.sleep(24 * 60 * 60)  # wait one day
         sunset_sunrise = sunrise_sunset_time()
         print('Set sunrise to', sunset_sunrise.sunrise)
         print('Set sunset to', sunset_sunrise.sunset)
         cmd_runner.day_start = sunset_sunrise.sunrise
         cmd_runner.day_end = sunset_sunrise.sunset
-        await asyncio.sleep(24 * 60 * 60)  # wait one day

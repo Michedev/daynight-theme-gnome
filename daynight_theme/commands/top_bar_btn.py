@@ -20,7 +20,7 @@ def pick(choices: list, end_msg: str = None):
     return choices[picked - 1]
 
 
-@register_command(6)
+@register_command(priority=6)
 class TopBarBtn(Command):
 
     @staticmethod

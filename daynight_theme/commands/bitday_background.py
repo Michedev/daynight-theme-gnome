@@ -22,16 +22,8 @@ def to_datetime(t: time) -> datetime:
 
 
 def _download_bitday_images():
-    try:
-        from mega import Mega
-    except ImportError:
-        os.system('pip install --user mega.py')
-        from mega import Mega
     import zipfile
     os.chdir(Path(os.environ['HOME']) / 'Pictures')
-    instance = Mega()
-    instance.login_anonymous()
-    instance.download_url('https://mega.nz/file/L55EHRoJ#kqbzKJUlQtIiZj4QZFl5Gcp7ebu_l2CR-pdL56gthOM')
     dst_folder = Path('bitday')
     if dst_folder.exists():
         dst_folder.rmtree()
@@ -46,7 +38,7 @@ def _download_bitday_images():
     print('Put bitday images into', dst_folder.abspath())
 
 
-@register_command(3)
+@register_command(priority=3)
 class BitDayBackground(Command):
 
     asap_update: bool = True

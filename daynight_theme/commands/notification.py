@@ -15,7 +15,7 @@ def set_cmd_notification(title: str, body: str = None):
     os.system(cmd)
 
 
-@register_command(2)
+@register_command(priority=2)
 class SendNotification(Command):
 
     @staticmethod

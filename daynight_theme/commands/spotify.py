@@ -6,7 +6,7 @@ from daynight_theme.command_register import register_command
 from daynight_theme.commands.command import Command
 
 
-@register_command(5)
+@register_command(priority=5)
 class SpotifyTheme(Command):
 
     @property

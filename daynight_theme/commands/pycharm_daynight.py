@@ -59,7 +59,7 @@ def exists_pycharm():
     return path_configs.exists()
 
 
-@register_command(4)
+@register_command(priority=4)
 class PycharmThemeSetter(Command):
 
     day_theme_xml: str = """\
