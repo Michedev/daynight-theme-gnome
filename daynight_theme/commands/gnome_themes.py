@@ -29,7 +29,7 @@ def pick(choices: list, end_msg: str = None):
     return choices[picked - 1]
 
 @register_command(priority=0)
-class GnomeShellThemeSetter(Command):
+class GTKThemeSetter(Command):
 
     def __init__(self, config):
         super().__init__(config)
@@ -63,11 +63,12 @@ class GnomeShellThemeSetter(Command):
         themes_list.remove(day_theme)
         print()
         night_theme = pick(themes_list, night_theme_msg)
-        return str(day_theme), str(night_theme)
-
+        day_theme, night_theme = str(day_theme), str(night_theme)
+        config['day_theme'] = day_theme
+        config['night_theme'] = night_theme
 
 @register_command(priority=1)
-class GnomeThemeSetter(Command):
+class GnomeShellThemeSetter(Command):
 
     def __init__(self, config: dict):
         super().__init__(config)

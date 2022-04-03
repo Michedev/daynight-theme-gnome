@@ -1,5 +1,5 @@
 from .bitday_background import BitDayBackground
-from .gnome_themes import GnomeThemeSetter, GnomeShellThemeSetter
+from .gnome_themes import GnomeShellThemeSetter, GTKThemeSetter
 from .pycharm_daynight import PycharmThemeSetter, exists_pycharm
 from .notification import SendNotification
 from .spotify import SpotifyTheme
