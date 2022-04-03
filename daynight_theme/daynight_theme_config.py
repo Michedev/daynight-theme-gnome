@@ -67,7 +67,7 @@ class SunriseSunSetDayNight:
 
 def run_all_actions():
     config = dict()
-    for action_name, class_Command_ in chain(('Day/Night Time', SunriseSunSetDayNight), iter_commands()):
+    for action_name, class_Command_ in chain(['Day/Night Time', SunriseSunSetDayNight], iter_commands()):
         print(f'====== {action_name} Section ======')
         class_Command_.on_config_setup(config)
     return config
