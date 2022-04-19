@@ -27,10 +27,11 @@ class SpotifyTheme(Command):
         return os.system('spicetify') == 0 and config['spotify']
 
     @staticmethod
-    def on_config_setup(config) -> bool:
+    def on_config_setup(config):
         spotify = Confirm.ask('Do you want day/night spotify themes? (this will download spicetify) [yes/no]')
         config['spotify'] = spotify
         if spotify:
             os.system('curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh')
             os.system('git clone https://github.com/spicetify/spicetify-themes.git')
             os.system('cd spicetify-themes && cp -r * ~/.config/spicetify/Themes && cd .. && rm -rf spicetify-themes')
+            os.system('spicetify backup apply')
