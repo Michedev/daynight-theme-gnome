@@ -51,14 +51,7 @@ class SunriseSunSetDayNight:
     def on_config_setup(config):
         daytime_auto = Confirm.ask("Do you want to setup day/night time automatically based on your latitude/longitude [yes/no]")
         config['use_api_sunrise_sunfall'] = daytime_auto
-        if daytime_auto:
-            FLORENCE_LAT = 43.7799528
-            FLORENCE_LONG = 11.2059486
-            latitude = FloatPrompt.ask(f"Insert the latitude:", default=FLORENCE_LAT)
-            longitude = FloatPrompt.ask(f"Inset the longitude:", default=FLORENCE_LONG)
-            config['api_latitude'] = latitude
-            config['api_longitude'] = longitude
-        else:
+        if not daytime_auto:
             day_start = parse_time('insert day start time (HH:mm): ')
             day_end = parse_time('insert night start time (HH:mm): ')
             config['day_start'] = day_start
