@@ -36,3 +36,6 @@ def main():
     if config['use_api_sunrise_sunfall']:
         asyncio.gather(update_sunrise_sunset_everyday(runner))
     runner.loop_forever()
+
+if __name__ == '__main__':
+    main()

@@ -66,7 +66,7 @@ class SunriseSunsetData:
 
 
 def sunset_sunrise_url(lat: Number, long: Number):
-    return f'https://api.sunrise-sunset.org/json?lat={lat}&lng={long}'
+    return f'http://api.sunrise-sunset.org/json?lat={lat}&lng={long}'
 
 
 @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
