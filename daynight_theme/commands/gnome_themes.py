@@ -52,6 +52,10 @@ class GTKThemeSetter(Command):
         cmd = f'gsettings set org.gnome.desktop.interface gtk-theme "{value}"'
         print(f'executing command "{cmd}"')
         os.system(cmd)
+        color = 'light' if value == self.day_value else 'dark'
+        cmd_color_scheme = f'gsettings set org.gnome.desktop.interface color-scheme prefer-{color}'
+        print(f'executing command "{cmd_color_scheme}"')
+        os.system(cmd_color_scheme)
 
     @staticmethod
     def on_config_setup(config) -> NoReturn:
