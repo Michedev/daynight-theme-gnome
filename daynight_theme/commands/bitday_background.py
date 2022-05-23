@@ -118,5 +118,5 @@ class BitDayBackground(Command):
         bitday_background = Confirm.ask('Do you want bitday background? [yes/no]')
         if bitday_background:
             _download_bitday_images()
-            config['bitday_background'] = bitday_background
+        config['bitday_background'] = bitday_background
 
