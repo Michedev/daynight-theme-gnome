@@ -28,6 +28,9 @@ def get_data_path(phase: str):
 
 @register_command(priority=6)
 class SunMoonLocalBackground(Command):
+
+    asap_update: bool = True
+
     day_phases = ['sunrise', 'high_sun', 'sunfall']
     night_phases = ['early_moon', 'middle_moon', 'late_moon']
 
