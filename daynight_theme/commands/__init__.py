@@ -17,5 +17,9 @@ from .pycharm_daynight import PycharmThemeSetter
 from .spotify import SpotifyTheme
 from .top_bar_btn import pick
 from .top_bar_btn import TopBarBtn
+from .sun_moon_local_background import SunMoonLocalBackground
 
-__all__ = [to_datetime, _download_bitday_images, BitDayBackground, Command, gtk_themes, gnome_shell_themes, pick, GTKThemeSetter, GnomeShellThemeSetter,  set_cmd_notification, SendNotification, pycharm_set_theme, pycharm_set_color_scheme, exists_pycharm, PycharmThemeSetter, SpotifyTheme, pick, TopBarBtn]
+__all__ = [to_datetime, _download_bitday_images, BitDayBackground, Command, gtk_themes, gnome_shell_themes, pick,
+           GTKThemeSetter, GnomeShellThemeSetter,  set_cmd_notification, SendNotification, pycharm_set_theme,
+           pycharm_set_color_scheme, exists_pycharm, PycharmThemeSetter, SpotifyTheme, pick, TopBarBtn,
+           SunMoonLocalBackground]

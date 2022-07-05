@@ -1,13 +1,15 @@
 import datetime
+import os
 from random import shuffle
 from typing import NoReturn
 
 from path import Path
 
 from daynight_theme import time_utils
-from daynight_theme.gnome_utils import set_cmd_background_
+from daynight_theme.gnome_utils import get_cmd_background
 from daynight_theme.sunrise_sunset_api import SunriseSunsetData
 from rich.prompt import Confirm
+from rich import print as rich_print
 import numpy as np
 from pkg_resources import resource_filename
 
@@ -21,7 +23,7 @@ night_range = None
 
 
 def get_data_path(phase: str):
-    return resource_filename('', f'data/background/{phase}')
+    return resource_filename('daynight_theme', f'data/background/{phase}')
 
 
 @register_command(priority=6)
@@ -50,13 +52,16 @@ class SunMoonLocalBackground(Command):
 
     def action(self, value: str):
         phases: list = self.day_phases if value == self.day_value else self.night_phases
-        i_phase: int = time_utils.get_dayphase(datetime.datetime.now().time(), self.day_start, self.day_end)
+        i_phase: int = time_utils.get_dayphase(datetime.datetime.now().time(), self.day_start, self.day_end, )
         phase: str = phases[i_phase]
         data_path = Path(get_data_path(phase))
         images = data_path.files()
         shuffle(images)
         newimage_path = images[0]
-        set_cmd_background_(newimage_path)
+        os.system(get_cmd_background(newimage_path))
+
+        rich_print('set wallpaper',  '[black]' + str(newimage_path).replace(phase, f'[underline][bold]{phase}[/bold][/underline]') + '[/black]')
+
 
     @staticmethod
     def is_runnable(config) -> bool:

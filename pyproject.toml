@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Set automatic Gnome theme during day and night"
 authors = ["Mikedev <mik3dev@gmail.com>"]
 license = "MIT"
-include = ['BitDay-2-1920x1080.zip']
+include = [
+    'data/*'
+]
+
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0.0"
