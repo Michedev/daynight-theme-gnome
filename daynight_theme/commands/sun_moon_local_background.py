@@ -52,7 +52,9 @@ class SunMoonLocalBackground(Command):
 
     def action(self, value: str):
         phases: list = self.day_phases if value == self.day_value else self.night_phases
-        i_phase: int = time_utils.get_dayphase(datetime.datetime.now().time(), self.day_start, self.day_end, )
+        i_phase: int = time_utils.get_dayphase(datetime.datetime.now().time(),
+                                               self.day_start, self.day_end,
+                                               [0.2, 0.6, 0.2])
         phase: str = phases[i_phase]
         data_path = Path(get_data_path(phase))
         images = data_path.files()

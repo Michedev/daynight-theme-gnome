@@ -34,6 +34,7 @@ def test_get_dayphase_night_end():
 
     assert get_dayphase(t, day_start, day_end) == 2
 
+
 def test_get_dayphase_day_start():
     t = datetime.time(5, 30, 5)
 
@@ -42,6 +43,7 @@ def test_get_dayphase_day_start():
 
     assert get_dayphase(t, day_start, day_end) == 0
 
+
 def test_get_dayphase_day_end():
     t = datetime.time(19, 30, 5)
 
@@ -49,3 +51,21 @@ def test_get_dayphase_day_end():
     day_end = datetime.time(20, 0, 0)
 
     assert get_dayphase(t, day_start, day_end) == 2
+
+
+def test_get_dayphase_day_end_different_spans():
+    t = datetime.time(13, 30, 5)
+
+    day_start = datetime.time(5, 10, 0)
+    day_end = datetime.time(20, 0, 0)
+
+    assert get_dayphase(t, day_start, day_end, [0.1, 0.1, 0.8]) == 2
+
+
+def test_get_dayphase_night_start_different_spans():
+    t = datetime.time(13, 30, 5)
+
+    day_start = datetime.time(5, 10, 0)
+    day_end = datetime.time(20, 0, 0)
+
+    assert get_dayphase(t, day_start, day_end, [0.8, 0.1, 0.1]) == 0
